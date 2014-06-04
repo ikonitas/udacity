@@ -1,25 +1,9 @@
-example_input = "John is connected to Bryant, Debra, Walter.\
-    John likes to play The Movie: The Game, The Legend of Corgi, Dinosaur Diner.\
-    Bryant is connected to Olive, Ollie, Freda, Mercedes.\
-    Bryant likes to play City Comptroller: The Fiscal Dilemma, Super Mushroom Man.\
-    Mercedes is connected to Walter, Robin, Bryant.\
-    Mercedes likes to play The Legend of Corgi, Pirates in Java Island, Seahorse Adventures.\
-    Olive is connected to John, Ollie.\
-    Olive likes to play The Legend of Corgi, Starfleet Commander.\
-    Debra is connected to Walter, Levi, Jennie, Robin.\
-    Debra likes to play Seven Schemers, Pirates in Java Island, Dwarves and Swords.\
-    Walter is connected to John, Levi, Bryant.\
-    Walter likes to play Seahorse Adventures, Ninja Hamsters, Super Mushroom Man.\
-    Levi is connected to Ollie, John, Walter.\
-    Levi likes to play The Legend of Corgi, Seven Schemers, City Comptroller: The Fiscal Dilemma.\
-    Ollie is connected to Mercedes, Freda, Bryant.\
-    Ollie likes to play Call of Arms, Dwarves and Swords, The Movie: The Game.\
-    Jennie is connected to Levi, John, Freda, Robin.\
-    Jennie likes to play Super Mushroom Man, Dinosaur Diner, Call of Arms.\
-    Robin is connected to Ollie.\
-    Robin likes to play Call of Arms, Dwarves and Swords.\
-    Freda is connected to Olive, John, Debra.\
-    Freda likes to play Starfleet Commander, Ninja Hamsters, Seahorse Adventures."
+example_input = """John is connected to Bryant, Debra, Walter. John likes to play The Movie: The Game, The Legend of Corgi, Dinosaur Diner. Bryant is connected to Olive, Ollie, Freda, Mercedes. Bryant likes to play City Comptroller: The Fiscal Dilemma, Super Mushroom Man. Mercedes is connected to Walter, Robin, Bryant. Mercedes likes to play The Legend of Corgi, Pirates in Java Island, Seahorse Adventures. Olive is connected to John, Ollie. Olive likes to play The Legend of Corgi, Starfleet Commander. Debra is connected to Walter, Levi, Jennie, Robin. Debra likes to play Seven Schemers, Pirates in Java Island, Dwarves and Swords. Walter is connected to John, Levi, Bryant. Walter likes to play Seahorse Adventures, Ninja Hamsters, Super Mushroom Man. Levi is connected to Ollie, John, Walter. Levi likes to play The Legend of Corgi, Seven Schemers, City Comptroller: The Fiscal Dilemma. Ollie is connected to Mercedes, Freda, Bryant. Ollie likes to play Call of Arms, Dwarves and Swords, The Movie: The Game. Jennie is connected to Levi, John, Freda, Robin. Jennie likes to play Super Mushroom Man, Dinosaur Diner, Call of Arms. Robin is connected to Ollie. Robin likes to play Call of Arms, Dwarves and Swords. Freda is connected to Olive, John, Debra. Freda likes to play Starfleet Commander, Ninja Hamsters, Seahorse Adventures."""
+
+
+def sanitize_names(names):
+    names = names.replace('.', '')
+    return names.split(', ')
 
 
 def create_data_structure(string_input):
@@ -31,9 +15,14 @@ def create_data_structure(string_input):
         elements.append(string_input[start:end + 1])
         start = end + 1
         end = string_input.find('.', start)
+        start += 1
+    connection = "is connected to "
+    games = "likes to play "
     for element in elements:
-        if "is connected to":
-            network[element[0:element.find('is connected to') - 1]] = {}
+        if connection in element:
+            name = element[0:element.find(connection) - 1]
+            names = element[element.find(connection):].replace(connection, '')
+            network[name] = {'connection': sanitize_names(names)}
         else:
             pass
 

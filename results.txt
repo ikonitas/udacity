@@ -1,0 +1,122 @@
+def create_data_structure(string_input):
+    network = {}
+    net = []
+    key = ""
+    lines = string_input.split(".")
+    for line in lines:
+        words = line.split(" ")
+        name = words[0]
+        #print name
+
+        if name == "":
+            break
+
+        if words[1] + " " + words[2] + " " + words[3] == "is connected to":
+            key = name + "__cont"
+        else:
+            key = name + "__play"
+
+        items = " ".join(words[4:]).split(", ")
+        network[key] = items
+    return network
+
+
+def get_connections(network, user):
+    if user_in_network(network, user) == False:
+        return None
+    key = user + "__cont"
+    return network.get(key)
+
+
+def user_in_network(network, user):
+    key = user + "__play"
+    if not key in network:
+        return False
+    return True
+
+
+def add_connection(network, user_A, user_B):
+    if user_in_network(network, user_A) == False:
+        return None
+    if user_in_network(network, user_B) == False:
+        return None
+    key = user_A + "__cont"
+    cont = network[key]
+    if not user_B in cont:
+        cont.append(user_B)
+    return network
+
+
+def add_new_user(network, user, games):
+    key = user + "__play"
+    if user_in_network(network, user):
+        play = network[key]
+        for x in games:
+            if x not in play:
+                play.append(x)
+    else:
+        network[key] = games
+
+    return network
+
+
+def secondary_connections(network, user):
+    if user_in_network(network, user) == False:
+        return None
+    key = user + "__cont"
+    if not key in network:
+        return []
+    cont = network[key]
+    l = []
+    for x in cont:
+        c = get_connections(network, x)
+        for y in c:
+            if not y in l:
+                l.append(y)
+    return []
+
+
+def connections_in_common(network, user_A, user_B):
+    if user_in_network(network, user_A) == False:
+        return False
+    if user_in_network(network, user_B) == False:
+        return False
+    cont_A = get_connections(network, user_A)
+    cont_B = get_connections(network, user_B)
+
+    c = 0
+    for x in cont_A:
+        if x in cont_B:
+            c += 1
+    return c
+
+def path_to_friend(network, user, connection):
+    # your RECURSIVE solution here!
+    return p2f(network, user, connection, [])
+
+def p2f(network, user, connection, history):
+    key = user + "__cont"
+    cont = network[key]
+    #print cont
+    for x in cont:
+        if x == connection:
+            return [x]
+        elif not x in history:
+            history.append(x)
+            v = p2f(network, x, connection, history)
+            if v != None:
+                #print x
+                return [x] + v
+    return None
+
+
+net = create_data_structure(example_input)
+print net
+print path_to_friend(net, 'John', 'Ollie')
+print get_connections(net, "Debra")
+print add_new_user(net, "Debra", []) 
+print add_new_user(net, "Nick", ["Seven Schemers", "The Movie: The Game"]) # True
+print get_connections(net, "Mercedes")
+print add_connection(net, "John", "Freda")
+print secondary_connections(net, "Mercedes")
+print connections_in_common(net, "Mercedes", "John")

@@ -1,6 +1,12 @@
 example_input = """John is connected to Bryant, Debra, Walter. John likes to play The Movie: The Game, The Legend of Corgi, Dinosaur Diner. Bryant is connected to Olive, Ollie, Freda, Mercedes. Bryant likes to play City Comptroller: The Fiscal Dilemma, Super Mushroom Man. Mercedes is connected to Walter, Robin, Bryant. Mercedes likes to play The Legend of Corgi, Pirates in Java Island, Seahorse Adventures. Olive is connected to John, Ollie. Olive likes to play The Legend of Corgi, Starfleet Commander. Debra is connected to Walter, Levi, Jennie, Robin. Debra likes to play Seven Schemers, Pirates in Java Island, Dwarves and Swords. Walter is connected to John, Levi, Bryant. Walter likes to play Seahorse Adventures, Ninja Hamsters, Super Mushroom Man. Levi is connected to Ollie, John, Walter. Levi likes to play The Legend of Corgi, Seven Schemers, City Comptroller: The Fiscal Dilemma. Ollie is connected to Mercedes, Freda, Bryant. Ollie likes to play Call of Arms, Dwarves and Swords, The Movie: The Game. Jennie is connected to Levi, John, Freda, Robin. Jennie likes to play Super Mushroom Man, Dinosaur Diner, Call of Arms. Robin is connected to Ollie. Robin likes to play Call of Arms, Dwarves and Swords. Freda is connected to Olive, John, Debra. Freda likes to play Starfleet Commander, Ninja Hamsters, Seahorse Adventures."""
 
 
+def sanitize_sentence(element):
+    connection = "is connected to "
+    games = "likes to play "
+    name = element[0:element.find(connection) - 1]
+    names = element[element.find(connection):].replace(connection, '')
+
 def sanitize_names(names):
     names = names.replace('.', '')
     return names.split(', ')
@@ -57,12 +63,26 @@ def connections_in_common(network, user_A, user_B):
 
 
 def path_to_friend(network, user_A, user_B):
-    # your RECURSIVE solution here!
+    connects = []
+    n = 0
+    for n in range(0, len(network[user_A]['connections']) - 1):
+        if user_B not in network[user_A]['connections']:
+            new_connections = path_to_friend(
+                network, network[user_A]['connections'][n], user_B
+            )
+            if user_B in new_connections:
+                connects.append(user_A)
+                connects += new_connections
+                return connects
+        else:
+            connects.append(user_A)
+            connects.append(user_B)
+            return connects
     return None
 
-#net = create_data_structure(example_input)
-#print net
-#print path_to_friend(net, 'John', 'Ollie')
+net = create_data_structure(example_input)
+print net
+print path_to_friend(net, 'John', 'Ollie')
 #print get_connections(net, "Debra")
 #print add_new_user(net, "Debra", [])
 #print add_new_user(net, "Nick", ["Seven Schemers", "The Movie: The Game"]) # True

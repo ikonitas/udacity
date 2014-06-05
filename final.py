@@ -22,9 +22,16 @@ def create_data_structure(string_input):
         if connection in element:
             name = element[0:element.find(connection) - 1]
             names = element[element.find(connection):].replace(connection, '')
-            network[name] = {'connection': sanitize_names(names)}
+            connections_l = sanitize_names(names)
         else:
-            pass
+            name = element[0:element.find(games) - 1]
+            names = element[element.find(games):].replace(games, '')
+            games_l = sanitize_names(names)
+        if name not in network:
+            network[name] = {'connections': '', 'games': ''}
+        else:
+            network[name]['connections'] = connections_l
+            network[name]['games'] = games_l
 
     return network
 

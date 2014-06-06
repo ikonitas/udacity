@@ -43,14 +43,25 @@ def create_data_structure(string_input):
 
 
 def get_connections(network, user):
-    return []
+    if user in network:
+        return network[user]['connections']
+    else:
+        return []
 
 
 def add_connection(network, user_A, user_B):
-    return network
+    if user_A in network and user_B in network:
+        network[user_A]['connections'].append(user_B)
+        return network
+    else:
+        return False
 
 
 def add_new_user(network, user, games):
+    if user in network:
+        network[user]['games'] = games
+    else:
+        network[user] = {'connections': [], 'games': games}
     return network
 
 
@@ -83,9 +94,9 @@ def path_to_friend(network, user_A, user_B):
 net = create_data_structure(example_input)
 print net
 print path_to_friend(net, 'John', 'Ollie')
-#print get_connections(net, "Debra")
-#print add_new_user(net, "Debra", [])
-#print add_new_user(net, "Nick", ["Seven Schemers", "The Movie: The Game"]) # True
+print get_connections(net, "Debra")
+boom = add_new_user(net, "Debra", [])
+boom1 = add_new_user(net, "Nick", ["Seven Schemers", "The Movie: The Game"])
 #print get_connections(net, "Mercedes")
 #print add_connection(net, "John", "Freda")
 #print get_secondary_connections(net, "Mercedes")

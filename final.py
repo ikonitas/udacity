@@ -16,21 +16,28 @@ def create_data_structure(string_input):
     network = {}
     elements = []
     start = 0
+    # Find dot appearence.
     end = string_input.find('.')
+    # Loop till there is not more dots has been left.
     while end != -1:
+        # append sentence to the list up to dot.
         elements.append(string_input[start:end + 1])
         start = end + 1
+        # Find anoteher dot from start position
         end = string_input.find('.', start)
     connection = "is connected to "
     games = "likes to play "
     for element in elements:
         if connection in element:
+            # Clean sentence for connections output.
             name, names = sanitize_sentence(element, connection)
             connections_l = sanitize_names(names)
         else:
+            # Clean sentence for games output.
             name, names = sanitize_sentence(element, games)
             games_l = sanitize_names(names)
         if name not in network:
+            # if name not in network create dict.
             network[name] = {'connections': '', 'games': ''}
         else:
             network[name]['connections'] = connections_l
@@ -40,21 +47,27 @@ def create_data_structure(string_input):
 
 
 def get_connections(network, user):
+    # Check if user exist in network
     if user in network:
         return network[user]['connections']
-    return []
+    return None
 
 
 def add_connection(network, user_A, user_B):
     if user_A in network and user_B in network:
-        network[user_A]['connections'].append(user_B)
+        # Check if user_B not in connections with user_A.
+        if user_B not in network[user_A]['connections']:
+            network[user_A]['connections'].append(user_B)
         return network
     return False
 
 
 def add_new_user(network, user, games):
     if user in network:
-        network[user]['games'] = games
+        for game in games:
+            # append game in to user games if doesnt exist.
+            if game not in network[user]['games']:
+                network[user]['games'].append(game)
     else:
         network[user] = {'connections': [], 'games': games}
     return network
@@ -64,20 +77,23 @@ def get_secondary_connections(network, user):
     if user in network:
         results = []
         for u in network[user]['connections']:
-            for con in network[u]['connections']:
-                results.append(con)
+            if u in network:
+                for con in network[u]['connections']:
+                    if con not in results:
+                        results.append(con)
         return list(set(results))
-    return False
+    return None
 
 
 def connections_in_common(network, user_A, user_B):
     if user_A not in network or user_B not in network:
         return False
-    user_A_con = network[user_A]['connections']
-    user_B_con = network[user_B]['connections']
+    user_A = get_connections(network, user_A)
+    user_B = get_connections(network, user_B)
     count = 0
-    for connection in user_A_con:
-        if connection in user_B_con:
+    for connection in user_A:
+        # if connection in user_A than plus 1
+        if connection in user_B:
             count += 1
     return count
 
@@ -103,6 +119,17 @@ def path_to_friend(network, user_A, user_B, used=[]):
     return ex_path_to_friend(network, user_A, user_B, users=[])
 
 
+def games_in_common(network, game):
+    """ Outputs user names who has got given game in common. """
+    names = []
+    for name in network:
+        if 'games' in network[name]:
+            if game in network[name]['games']:
+                if name not in names:
+                    names.append(name)
+    return names
+
+
 net = create_data_structure(example_input)
 print net
 print path_to_friend(net, 'John', 'Ollie')
@@ -113,4 +140,4 @@ print get_connections(net, "Mercedes")
 print add_connection(net, "John", "Freda")
 print get_secondary_connections(net, "Mercedes")
 print connections_in_common(net, "Mercedes", "John")
-
+print games_in_common(net, 'The Legend of Corgi')
